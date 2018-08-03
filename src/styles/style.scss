@@ -1,0 +1,134 @@
+@import 'variables';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+}
+
+button, input {
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+.wrapper {
+    padding: 50px 20px;
+}
+
+.icon-controll {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    button {
+        background: {
+            color: rgba(255, 255, 255, 0.7);
+            image: url(icons/settings.svg);
+            repeat: no-repeat;
+            size: 16px;
+            position: 50%;
+        }
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        padding: 4px;
+        opacity: 0.6;
+        transition: all ease-in-out 0.25s;
+
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+}
+
+.dayforecast {
+    width: 300px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &__icon {
+        display: block;
+        height: 100px;
+    }
+
+    &__location {
+        letter-spacing: 2px;
+        font: {
+            weight: 700;
+            size: 13px;
+        }
+        text-transform: uppercase;
+        color: $base-blue-color;
+        margin: {
+            top: 20px;
+            bottom: 5px;
+        }
+    }
+
+    &__date {
+        letter-spacing: 1px;
+        font: {
+            weight: 700;
+            size: 11px;
+        }
+        text-transform: uppercase;
+        color: #d6d6d6;
+    }
+
+    &__temp {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    &__temp-item {
+        padding: 0 10px;
+        width: 33.3333%;
+        cursor: pointer;
+
+        small {
+            display: block;
+            border-top: 2px solid #f1f1f1;
+            border-bottom: 2px solid #f1f1f1;
+            text-align: center;
+            color: #dedede;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            transition: all 0.25s ease;
+        }
+
+        &.active small {
+            color: #c4c4c4;
+        }
+
+        p {
+            text-align: center;
+            font: {
+                size: 36px;
+                weight: 600;
+            }
+            color: $base-blue-color;
+            line-height: 1;
+            opacity: 0.3;
+            transition: all 0.5s ease;
+        }
+
+        &.active p {
+            font-size: 40px;
+        }
+    }
+}
