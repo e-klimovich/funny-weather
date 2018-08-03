@@ -1,7 +1,7 @@
 const OPENWEATHER_REQ_BASEURL = 'http://api.openweathermap.org/data/2.5/forecast/daily'
 const OPENWEATHER_PRIVATE_KEY = '8a2e4871b1c6deedc29eacb2cbcfc6e4'
-const DEFAULT_LOCALIZATION_LANGUAGE = 'ru'
-const DEFAULT_CITY = 'Minsk'
+const DEFAULT_LOCALIZATION_LANGUAGE = 'en'
+const DEFAULT_CITY = 'Минск'
 
 const localization = {
     ru: {
@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? chrome.storage.local.set({lang: DEFAULT_LOCALIZATION_LANGUAGE})
                 : options.lang = res['lang']
 
+            !res['city'] || res['city'] === ''
+                ? chrome.storage.local.set({city: DEFAULT_CITY})
+                : options.city = res['city']
+
             resolve(options)
 
         })
@@ -58,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {object} response after XHR
  */
 function getWeather(options) {
-    console.log('4: ', options.lang)
+    console.log(options)
     const xhr = new XMLHttpRequest()
     const req = `${OPENWEATHER_REQ_BASEURL}?q=${options.city}&units=metric&lang=${options.lang}&APPID=${OPENWEATHER_PRIVATE_KEY}`
 
@@ -75,6 +79,7 @@ function getWeather(options) {
  */
 function renderForecast(options) {
     const data = getWeather(options)
+    console.log(data)
     const forcastDate = options.date
     const locale = localization[options.lang]
 
@@ -85,7 +90,7 @@ function renderForecast(options) {
     document.getElementById('forecast_out').innerHTML = `
         <div class="dayforecast">
             <img src="icons/forecast/${data.list[weekDay].weather[0].icon}.svg" class="dayforecast__icon"/>
-            <div class="dayforecast__location">location block</div>
+            <div class="dayforecast__location">T.G.I.F.</div>
             <div class="dayforecast__date">${locale.days[weekDay + 1]} - ${monthDay} ${locale.months[month]}</div>
             <div class="dayforecast__temp">
                 <div class="dayforecast__temp-item">
@@ -104,3 +109,8 @@ function renderForecast(options) {
         </div>
     `
 }
+
+function setSettings() {
+    console.log('42')
+}
+
