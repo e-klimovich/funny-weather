@@ -7,20 +7,25 @@
     <body>
         <div class="wrapper">
 
-            <div id="forecast_out">
+            <!-- widget controlls and ettings buttons -->
+            <div class="icon-controll">
+                <button class="icon-settings js-toggle-settings"></button>
+            </div>
+
+            <!-- main out forecast block -->
+            <div id="forecast_out" class="container active">
                 Loading...
             </div>
 
-            <div class="icon-controll">
-                <button id="settings" class="icon-settings"></button>
-            </div>
-
-            <div class="settings-inner">
-                <form id="set-settings">
-                    <label for="language">set language<input type="text" id="language" value="en"></label>
-                    <label for="city">set city<input type="text" id="city" value="Minsk"></label>
-                    <button type="submit">Save</button>
-                </form>
+            <!-- settings block -->
+            <div id="settings" class="container">
+                <div class="settings-inner">
+                    <form id="set-settings">
+                        <label for="language">set language<input type="text" id="language" value="en"></label>
+                        <label for="city">set city<input type="text" id="city" value="Minsk"></label>
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
             </div>
 
         </div>

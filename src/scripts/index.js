@@ -54,6 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setLocale.then(options => renderForecast(options))
 
+    // constroll events
+    document.getElementsByClassName('js-toggle-settings')[0]
+        .addEventListener('click', (event) => {
+            event.preventDefault()
+
+            event.target.classList.toggle('active')
+
+            document.getElementById('forecast_out').classList.toggle('active')
+            document.getElementById('settings').classList.toggle('active')
+        })
+
 })
 
 /**
@@ -62,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {object} response after XHR
  */
 function getWeather(options) {
-    console.log(options)
     const xhr = new XMLHttpRequest()
     const req = `${OPENWEATHER_REQ_BASEURL}?q=${options.city}&units=metric&lang=${options.lang}&APPID=${OPENWEATHER_PRIVATE_KEY}`
 
@@ -79,7 +89,7 @@ function getWeather(options) {
  */
 function renderForecast(options) {
     const data = getWeather(options)
-    console.log(data)
+
     const forcastDate = options.date
     const locale = localization[options.lang]
 
@@ -87,10 +97,12 @@ function renderForecast(options) {
     const month = forcastDate.getMonth()
     const monthDay = forcastDate.getDate()
 
+    const phrase = getFrase(weekDay)
+
     document.getElementById('forecast_out').innerHTML = `
         <div class="dayforecast">
             <img src="icons/forecast/${data.list[weekDay].weather[0].icon}.svg" class="dayforecast__icon"/>
-            <div class="dayforecast__location">T.G.I.F.</div>
+            <div class="dayforecast__phrase">${phrase}</div>
             <div class="dayforecast__date">${locale.days[weekDay + 1]} - ${monthDay} ${locale.months[month]}</div>
             <div class="dayforecast__temp">
                 <div class="dayforecast__temp-item">
@@ -110,7 +122,25 @@ function renderForecast(options) {
     `
 }
 
+/**
+ * Get frase according entered options
+ * @param {number} day 
+ * @returns {string}
+ */
+function getFrase(day) {
+    const out = {
+        0: 'Понедельник...',
+        1: 'Не знаю что и сказать то. Просто держись',
+        2: 'Среда - маленькая пятница',
+        3: 'Держись осталось немого',
+        4: 'T.G.I.F. как у нас на руси говорят',
+        5: 'Мой самй любимый день недели. Ведь завтра еще один выходной',
+        6: 'Отдыхай как будто завтра понедельник... в смысле завтар поедельник?'
+    }
+
+    return out[day]
+}
+
 function setSettings() {
     console.log('42')
 }
-
