@@ -21,9 +21,20 @@
             <div id="settings" class="container">
                 <div class="settings-inner">
                     <form id="set-settings">
-                        <label for="language">set language<input type="text" id="language" value="en"></label>
-                        <label for="city">set city<input type="text" id="city" value="Minsk"></label>
-                        <button type="submit">Save</button>
+                        <div class="form-field form-field_radio">
+                            <div class="form-field__name">Choose language</div>
+                            <label><input type="radio" name="language" value="en" checked><span>en</span></label>
+                            <label><input type="radio" name="language" value="ru"><span>ru</span></label>
+                        </div>
+
+                        <div class="form-field">
+                            <div class="form-field__name">Enter your city</div>
+                            <input type="text" name="city" autocomplete="off">
+                        </div>
+
+                        <button type="submit" class="btn-blue">Save</button>
+
+                        <div id="error-message"></div>
                     </form>
                 </div>
             </div>

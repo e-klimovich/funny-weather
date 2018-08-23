@@ -27,34 +27,47 @@ const localization = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-
     let options = {
         date: new Date(),
         lang: DEFAULT_LOCALIZATION_LANGUAGE,
         city: DEFAULT_CITY
     }
 
-    const setLocale = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
+        setStorageSettings('lang', DEFAULT_LOCALIZATION_LANGUAGE)
+        setStorageSettings('city', DEFAULT_CITY)
 
-        chrome.storage.local.get(['lang'], (res) => {
-
-            !res['lang'] || res['lang'] === ''
-                ? chrome.storage.local.set({lang: DEFAULT_LOCALIZATION_LANGUAGE})
-                : options.lang = res['lang']
-
-            !res['city'] || res['city'] === ''
-                ? chrome.storage.local.set({city: DEFAULT_CITY})
-                : options.city = res['city']
-
-            resolve(options)
-
-        })
-
+        resolve(options)
     })
 
-    setLocale.then(options => renderForecast(options))
+    promise.then(options => renderForecast(options))
 
-    // constroll events
+    document.getElementById('set-settings')
+        .addEventListener('submit', e => {
+            e.preventDefault()
+
+            const form = e.target
+            const inputs = form.getElementsByTagName('input')
+            
+            let settings = {}
+
+            for(let i = 0; i < inputs.length; i++) {
+                if(inputs[i].type === 'text' || inputs[i].type === 'radio' && inputs[i].checked) {
+                    settings[inputs[i].name] = inputs[i].value
+                }
+            }
+
+            chrome.storage.local.set({lang: settings.language})
+            chrome.storage.local.set({city: settings.city})
+
+            options.lang = settings.language
+            options.city = settings.city
+
+            // rerender forecast with new settings
+            renderForecast(options)
+        })
+
+    // switch to extenson settings panel
     document.getElementsByClassName('js-toggle-settings')[0]
         .addEventListener('click', (event) => {
             event.preventDefault()
@@ -65,6 +78,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('settings').classList.toggle('active')
         })
 
+    /**
+     * Check extensions settings in chrome.storage
+     * and set deafult if dosn't exist
+     * @param {string} key
+     * @param {*} deafultValue
+     */
+    function setStorageSettings(key, deafultValue) {
+        chrome.storage.local.get([key], (res) => {
+            !res[key] || res[key] === ''
+                ? chrome.storage.local.set({key: deafultValue})
+                : options.key = res[key]
+        })
+    }
 })
 
 /**
@@ -83,12 +109,17 @@ function getWeather(options) {
 }
 
 /**
- * Render 3 days forecast with main information 
- * by day in forcastDate param
+ * Render current day weather forecast
  * @param {object} options
  */
 function renderForecast(options) {
     const data = getWeather(options)
+
+    if(data.cod === '404') {
+        document.getElementById('error-message').innerHTML = data.message
+
+        return false
+    }
 
     const forcastDate = options.date
     const locale = localization[options.lang]
@@ -134,13 +165,9 @@ function getFrase(day) {
         2: 'Среда - маленькая пятница',
         3: 'Держись осталось немого',
         4: 'T.G.I.F. как у нас на руси говорят',
-        5: 'Мой самй любимый день недели. Ведь завтра еще один выходной',
+        5: 'Мой самый любимый день недели. Ведь завтра еще один выходной',
         6: 'Отдыхай как будто завтра понедельник... в смысле завтар поедельник?'
     }
 
     return out[day]
-}
-
-function setSettings() {
-    console.log('42')
 }
