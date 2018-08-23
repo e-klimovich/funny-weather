@@ -1,7 +1,7 @@
 const OPENWEATHER_REQ_BASEURL = 'http://api.openweathermap.org/data/2.5/forecast/daily'
 const OPENWEATHER_PRIVATE_KEY = '8a2e4871b1c6deedc29eacb2cbcfc6e4'
-const DEFAULT_LOCALIZATION_LANGUAGE = 'en'
-const DEFAULT_CITY = 'Минск'
+const DEFAULT_LOCALIZATION_LANGUAGE = 'ru'
+const DEFAULT_CITY = 'Minsk'
 
 const localization = {
     ru: {
@@ -12,7 +12,16 @@ const localization = {
             now: 'сейчас',
             next: 'макс'
         },
-        months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря']
+        months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
+        phrase: {
+            0: 'Понедельник... вот-вот кто их любит то вообще',
+            1: 'Не знаю что и сказать то. Просто держись',
+            2: 'Среда - маленькая пятница',
+            3: 'Держись осталось немого, завтра пятница',
+            4: 'T.G.I.F. как у нас на руси говорят',
+            5: 'Мой самый любимый день недели. Ведь завтра еще один выходной',
+            6: 'Отдыхай как будто завтра понедельник... в смысле завтар поедельник?'
+        }
     },
     en: {
         language: 'en',
@@ -22,7 +31,16 @@ const localization = {
             now: 'now',
             next: 'max'
         },
-        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        phrase: {
+            0: 'Monday',
+            1: 'Tuesday',
+            2: 'Wednesday',
+            3: 'Thursday',
+            4: 'Friday',
+            5: 'Saturday',
+            6: 'Sunday'
+        }
     }
 }
 
@@ -34,8 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const promise = new Promise((resolve, reject) => {
-        setStorageSettings('lang', DEFAULT_LOCALIZATION_LANGUAGE)
-        setStorageSettings('city', DEFAULT_CITY)
+        chrome.storage.local.get(['lang'], (res) => {
+            !res.lang || res.lang === ''
+                ? chrome.storage.local.set({lang: DEFAULT_LOCALIZATION_LANGUAGE})
+                : options.lang = res.lang
+        })
+
+        chrome.storage.local.get(['city'], (res) => {
+            !res.city || res.city === ''
+                ? chrome.storage.local.set({city: DEFAULT_CITY})
+                : options.city = res.city
+        })
 
         resolve(options)
     })
@@ -77,20 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('forecast_out').classList.toggle('active')
             document.getElementById('settings').classList.toggle('active')
         })
-
-    /**
-     * Check extensions settings in chrome.storage
-     * and set deafult if dosn't exist
-     * @param {string} key
-     * @param {*} deafultValue
-     */
-    function setStorageSettings(key, deafultValue) {
-        chrome.storage.local.get([key], (res) => {
-            !res[key] || res[key] === ''
-                ? chrome.storage.local.set({key: deafultValue})
-                : options.key = res[key]
-        })
-    }
 })
 
 /**
@@ -115,10 +128,15 @@ function getWeather(options) {
 function renderForecast(options) {
     const data = getWeather(options)
 
-    if(data.cod === '404') {
-        document.getElementById('error-message').innerHTML = data.message
+    const helpBlock = document.getElementById('settings-message')
 
-        return false
+    switch(data.cod) {
+        case '404':
+            helpBlock.innerHTML = `Error: ${data.message}`
+            return false
+
+        default:
+            helpBlock.innerHTML = `Ok`
     }
 
     const forcastDate = options.date
@@ -128,7 +146,7 @@ function renderForecast(options) {
     const month = forcastDate.getMonth()
     const monthDay = forcastDate.getDate()
 
-    const phrase = getFrase(weekDay)
+    const phrase = locale.phrase[weekDay]
 
     document.getElementById('forecast_out').innerHTML = `
         <div class="dayforecast">
@@ -151,23 +169,4 @@ function renderForecast(options) {
             </div>
         </div>
     `
-}
-
-/**
- * Get frase according entered options
- * @param {number} day 
- * @returns {string}
- */
-function getFrase(day) {
-    const out = {
-        0: 'Понедельник...',
-        1: 'Не знаю что и сказать то. Просто держись',
-        2: 'Среда - маленькая пятница',
-        3: 'Держись осталось немого',
-        4: 'T.G.I.F. как у нас на руси говорят',
-        5: 'Мой самый любимый день недели. Ведь завтра еще один выходной',
-        6: 'Отдыхай как будто завтра понедельник... в смысле завтар поедельник?'
-    }
-
-    return out[day]
 }
