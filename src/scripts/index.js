@@ -1,4 +1,4 @@
-const OPENWEATHER_REQ_BASEURL = 'http://api.openweathermap.org/data/2.5/forecast/daily'
+const OPENWEATHER_REQ_BASEURL = 'http://api.openweathermap.org/data/2.5/weather'
 const OPENWEATHER_PRIVATE_KEY = '8a2e4871b1c6deedc29eacb2cbcfc6e4'
 const DEFAULT_LOCALIZATION_LANGUAGE = 'ru'
 const DEFAULT_CITY = 'Minsk'
@@ -8,9 +8,9 @@ const localization = {
         language: 'ru',
         days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
         extDays: {
-            prev: 'мин',
-            now: 'сейчас',
-            next: 'макс'
+            humidity: 'влажность',
+            temp: 'температура',
+            pressure: 'давление'
         },
         months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
         phrase: {
@@ -27,9 +27,9 @@ const localization = {
         language: 'en',
         days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         extDays: {
-            prev: 'min',
-            now: 'now',
-            next: 'max'
+            humidity: 'humidity',
+            temp: 'temp',
+            pressure: 'pressure'
         },
         months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         phrase: {
@@ -118,6 +118,8 @@ function getWeather(options) {
     xhr.open('GET', req, false)
     xhr.send(null)
 
+    console.log(JSON.parse(xhr.responseText))
+
     return JSON.parse(xhr.responseText)
 }
 
@@ -150,21 +152,23 @@ function renderForecast(options) {
 
     document.getElementById('forecast_out').innerHTML = `
         <div class="dayforecast">
-            <img src="icons/forecast/${data.list[weekDay].weather[0].icon}.svg" class="dayforecast__icon"/>
+            <img src="icons/forecast/${data.weather[0].icon}.svg" 
+                class="dayforecast__icon" 
+                title="${data.weather[0].description}" />
             <div class="dayforecast__phrase">${phrase}</div>
             <div class="dayforecast__date">${locale.days[weekDay + 1]} - ${monthDay} ${locale.months[month]}</div>
             <div class="dayforecast__temp">
                 <div class="dayforecast__temp-item">
-                    <small>${locale.extDays.prev}</small>
-                    <p>${Math.round(data.list[weekDay].temp.min)}&deg;</p>
+                    <small>${locale.extDays.humidity}</small>
+                    <p>${Math.round(data.main.humidity)}</p>
                 </div>
                 <div class="dayforecast__temp-item active">
-                    <small>${locale.extDays.now}</small>
-                    <p>${Math.round(data.list[weekDay].temp.day)}&deg;</p>
+                    <small>${locale.extDays.temp}</small>
+                    <p>${Math.round(data.main.temp)}&deg;</p>
                 </div>
                 <div class="dayforecast__temp-item">
-                    <small>${locale.extDays.next}</small>
-                    <p>${Math.round(data.list[weekDay].temp.max)}&deg;</p>
+                    <small>${locale.extDays.pressure}</small>
+                    <p>${Math.round(data.main.pressure)}</p>
                 </div>
             </div>
         </div>
