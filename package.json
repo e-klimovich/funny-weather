@@ -2,7 +2,7 @@
   "name": "funny-weather",
   "version": "1.0.0",
   "description": "Weather forecast chrome extenson",
-  "main": "popup.js",
+  "main": "dest/index.html",
   "scripts": {
     "dev": "gulp",
     "build": "gulp build",

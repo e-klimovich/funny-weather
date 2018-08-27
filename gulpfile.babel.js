@@ -23,12 +23,6 @@ gulp.task('scripts', () =>
         .pipe(gulp.dest('./dest/'))
 )
 
-gulp.task('build-zip', () =>
-    gulp.src('./dest')
-        .pipe(zip(`fancy_weather_v.${version}.zip`))
-        .pipe(gulp.dest('./build/'))
-)
-
 gulp.task('watch', function() {
     gulp.watch(['./src/styles/**/*.scss'], ['styles']);
     gulp.watch(['./src/scripts/index.js'], ['scripts']);
@@ -38,4 +32,4 @@ gulp.task('watch', function() {
 gulp.task('default', ['styles', 'scripts', 'watch'])
 
 // build for publishing
-gulp.task('build', gulpsync.sync(['styles', 'scripts', 'build-zip']))
+gulp.task('build', gulpsync.sync(['styles', 'scripts']))

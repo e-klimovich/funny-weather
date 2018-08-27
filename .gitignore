@@ -1,3 +1,7 @@
 node_modules
 dest/**/*.css
 dest/**/*.js
+
+# chrome public files
+*.crx
+*.pem
